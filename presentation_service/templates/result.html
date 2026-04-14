@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Result</title>
+</head>
+<body>
+    <h1>Submission Result</h1>
+
+    <p><strong>Status:</strong> {{ result.status }}</p>
+    <p><strong>Category:</strong> {{ result.category }}</p>
+    <p><strong>Priority:</strong> {{ result.priority }}</p>
+    <p><strong>Note:</strong> {{ result.note }}</p>
+
+    <hr>
+
+    <h2>Submitted Event Details</h2>
+    <p><strong>Title:</strong> {{ result.title }}</p>
+    <p><strong>Description:</strong> {{ result.description }}</p>
+    <p><strong>Location:</strong> {{ result.location }}</p>
+    <p><strong>Date:</strong> {{ result.date }}</p>
+    <p><strong>Organiser:</strong> {{ result.organiser }}</p>
+
+    <br>
+    <a href="/">Submit Another Event</a>
+</body>
+</html>
