@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-WORKFLOW_SERVICE_URL = "http://127.0.0.1:5002/submit"
+WORKFLOW_SERVICE_URL = "http://101.37.187.169:5002/submit"
 
 
 @app.route("/", methods=["GET"])
