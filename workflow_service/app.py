@@ -4,19 +4,10 @@ import os
 
 app = Flask(__name__)
 
-DATA_SERVICE_BASE_URL = os.getenv("DATA_SERVICE_BASE_URL", "http://127.0.0.1:5001")
-SUBMISSION_EVENT_URL = os.getenv(
-    "SUBMISSION_EVENT_URL",
-    "https://submissfunction-xhmbeyvezh.cn-hangzhou.fcapp.run"
-)
-PROCESSING_URL = os.getenv(
-    "PROCESSING_URL",
-    "https://processfunction-foletgmhuy.cn-hangzhou.fcapp.run"
-)
-RESULT_UPDATE_URL = os.getenv(
-    "RESULT_UPDATE_URL",
-    "https://result-function-dyjqnjlgve.cn-hangzhou.fcapp.run"
-)
+DATA_SERVICE_BASE_URL = "http://101.37.187.169:5001"
+SUBMISSION_EVENT_URL = "https://submissfunction-xhmbeyvezh.cn-hangzhou.fcapp.run"
+PROCESSING_URL = "https://processfunction-foletgmhuy.cn-hangzhou.fcapp.run"
+RESULT_UPDATE_URL = "https://result-function-dyjqnjlgve.cn-hangzhou.fcapp.run"
 
 
 @app.route("/health", methods=["GET"])
