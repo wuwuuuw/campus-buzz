@@ -1,20 +1,22 @@
 from flask import Flask, request, jsonify
 import requests
-import sys
-from pathlib import Path
-
-# Allow importing from the project root
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.append(str(PROJECT_ROOT))
-
-from functions.submission_event_function import handle_submission_event
-from functions.processing_function import process_submission
-from functions.result_update_function import build_result_update
+import os
 
 app = Flask(__name__)
 
-DATA_SERVICE_BASE_URL = "http://127.0.0.1:5001"
+DATA_SERVICE_BASE_URL = os.getenv("DATA_SERVICE_BASE_URL", "http://127.0.0.1:5001")
+SUBMISSION_EVENT_URL = os.getenv(
+    "SUBMISSION_EVENT_URL",
+    "https://submissfunction-xhmbeyvezh.cn-hangzhou.fcapp.run"
+)
+PROCESSING_URL = os.getenv(
+    "PROCESSING_URL",
+    "https://processfunction-foletgmhuy.cn-hangzhou.fcapp.run"
+)
+RESULT_UPDATE_URL = os.getenv(
+    "RESULT_UPDATE_URL",
+    "https://result-function-dyjqnjlgve.cn-hangzhou.fcapp.run"
+)
 
 
 @app.route("/health", methods=["GET"])
@@ -30,32 +32,50 @@ def submit():
         return jsonify({"error": "Invalid JSON body"}), 400
 
     try:
-        # Step 1: Create initial record in Data Service
+        # Step 1: create initial record
         create_response = requests.post(
             f"{DATA_SERVICE_BASE_URL}/records",
             json=submission,
-            timeout=5,
+            timeout=10,
         )
         create_response.raise_for_status()
         created_record = create_response.json()
 
-        # Step 2: Submission Event Function
-        event_payload = handle_submission_event(created_record)
-
-        # Step 3: Processing Function
-        processing_result = process_submission(event_payload["submission"])
-
-        # Step 4: Result Update Function
-        update_payload = build_result_update(
-            event_payload["record_id"],
-            processing_result
+        # Step 2: submission event function
+        event_response = requests.post(
+            SUBMISSION_EVENT_URL,
+            json=created_record,
+            timeout=10,
         )
+        event_response.raise_for_status()
+        event_payload = event_response.json()
 
-        # Step 5: Update stored record in Data Service
+        # Step 3: processing function
+        processing_response = requests.post(
+            PROCESSING_URL,
+            json=event_payload["submission"],
+            timeout=10,
+        )
+        processing_response.raise_for_status()
+        processing_result = processing_response.json()
+
+        # Step 4: result update function
+        result_update_response = requests.post(
+            RESULT_UPDATE_URL,
+            json={
+                "record_id": event_payload["record_id"],
+                "processing_result": processing_result
+            },
+            timeout=10,
+        )
+        result_update_response.raise_for_status()
+        update_payload = result_update_response.json()
+
+        # Step 5: update stored record
         update_response = requests.put(
             f"{DATA_SERVICE_BASE_URL}/records/{update_payload['record_id']}",
             json=update_payload["update_data"],
-            timeout=5,
+            timeout=10,
         )
         update_response.raise_for_status()
         updated_record = update_response.json()
@@ -64,16 +84,10 @@ def submit():
 
     except requests.RequestException as e:
         return jsonify({
-            "error": "Failed to communicate with Data Service",
-            "details": str(e)
-        }), 500
-
-    except Exception as e:
-        return jsonify({
-            "error": "Unexpected workflow error",
+            "error": "Workflow failed",
             "details": str(e)
         }), 500
 
 
 if __name__ == "__main__":
-    app.run(port=5002, debug=True)
+    app.run(host="0.0.0.0", port=5002, debug=True)
