@@ -3,24 +3,32 @@ import uuid
 
 app = Flask(__name__)
 
-# In-memory storage for local development
+# In-memory dictionary to store submission records for local development/demonstration
 records = {}
-
 
 @app.route("/health", methods=["GET"])
 def health():
+    """
+    Health check endpoint to verify if the container is running correctly.
+    """
     return jsonify({"status": "ok"}), 200
 
 
 @app.route("/records", methods=["POST"])
 def create_record():
+    """
+    Component: Data Service (Container)
+    Role: Create the initial submission record with a 'PENDING' status.
+    """
     data = request.get_json()
 
     if not data:
         return jsonify({"error": "Invalid JSON body"}), 400
 
+    # Generate a unique ID for each campus event submission
     record_id = str(uuid.uuid4())
 
+    # Create the record structure as per project requirements
     record = {
         "id": record_id,
         "title": data.get("title", ""),
@@ -28,7 +36,7 @@ def create_record():
         "location": data.get("location", ""),
         "date": data.get("date", ""),
         "organiser": data.get("organiser", ""),
-        "status": "PENDING",
+        "status": "PENDING",  # Initial state before background processing
         "category": "",
         "priority": "",
         "note": "",
@@ -40,6 +48,10 @@ def create_record():
 
 @app.route("/records/<record_id>", methods=["GET"])
 def get_record(record_id):
+    """
+    Component: Data Service (Container)
+    Role: Retrieve a specific record so the user can view the outcome.
+    """
     record = records.get(record_id)
 
     if not record:
@@ -50,6 +62,10 @@ def get_record(record_id):
 
 @app.route("/records/<record_id>", methods=["PUT"])
 def update_record(record_id):
+    """
+    Component: Data Service (Container)
+    Role: Update the stored record with results computed by the Serverless functions.
+    """
     record = records.get(record_id)
 
     if not record:
@@ -59,7 +75,7 @@ def update_record(record_id):
     if not data:
         return jsonify({"error": "Invalid JSON body"}), 400
 
-    # Only update result-related fields for now
+    # Update result-related fields after Processing and Result Update functions finish
     record["status"] = data.get("status", record["status"])
     record["category"] = data.get("category", record["category"])
     record["priority"] = data.get("priority", record["priority"])
@@ -70,4 +86,5 @@ def update_record(record_id):
 
 
 if __name__ == "__main__":
+    # The Data Service runs on port 5001 as defined in the system architecture
     app.run(host="0.0.0.0", port=5001, debug=True)
