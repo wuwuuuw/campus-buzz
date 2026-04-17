@@ -3,16 +3,17 @@ import requests
 
 app = Flask(__name__)
 
-# Component: Presentation Service (Container)
-# This URL points to the Workflow Service, which acts as the orchestrator.
+# --- Configuration ---
+# Component: Presentation Service (Frontend Container)
+# This URL points to the Workflow Service, which acts as the backend orchestrator.
 WORKFLOW_SERVICE_URL = "http://101.37.187.169:5002/submit"
 
 
 @app.route("/", methods=["GET"])
 def index():
     """
-    Role: Serve the HTML form to the end-user.
-    This fulfills the 'User submits a form-based request' part of the project.
+    Renders the initial entry point for the application.
+    Displays the HTML form to the end-user to collect submission data.
     """
     return render_template("index.html")
 
@@ -20,10 +21,11 @@ def index():
 @app.route("/submit", methods=["POST"])
 def submit():
     """
-    Role: Collect form data and forward it to the Workflow Service.
-    It handles the transition from user input to the automated background process.
+    Acts as a proxy/gateway.
+    Receives form data from the user, packages it as JSON, and hands it
+    off to the internal Workflow Service for heavy lifting.
     """
-    # Extract data from the HTML form fields
+    # Extract data from the HTML form fields sent via POST request
     submission = {
         "title": request.form.get("title", "").strip(),
         "description": request.form.get("description", "").strip(),
@@ -34,29 +36,32 @@ def submit():
 
     try:
         # Step 1: Forward the submission to the Workflow Service (Container)
-        # The Workflow Service will then trigger the Serverless pipeline.
+        # We use a POST request with a JSON payload.
+        # A 10-second timeout accounts for potential cold starts in downstream Serverless functions.
         response = requests.post(
             WORKFLOW_SERVICE_URL,
             json=submission,
-            timeout=10,  # Increased timeout to allow for serverless cold starts
+            timeout=10,
         )
 
-        # Raise an exception if the Workflow Service returns an error (4xx or 5xx)
+        # Check if the HTTP request was successful (200-299 status codes)
         response.raise_for_status()
 
-        # Step 2: Receive the final processed result (Status, Category, Priority, Note)
+        # Step 2: Parse the final processed result from the backend
+        # Expected keys typically include: Status, Category, Priority, and Note.
         result = response.json()
 
-        # Step 3: Display the final outcome to the user via the result template
+        # Step 3: Render the success page with the processed data
         return render_template("result.html", result=result)
 
     except requests.RequestException as e:
-        # Error handling if the back-end services are unreachable
+        # --- Error Handling ---
+        # If the backend service is down or times out, provide a graceful error response
         error_result = {
             "status": "ERROR",
-            "category": "-",
-            "priority": "-",
-            "note": f"Failed to connect to Workflow Service: {str(e)}",
+            "category": "Connection Failure",
+            "priority": "N/A",
+            "note": f"System currently unavailable: {str(e)}",
             "title": submission["title"],
             "description": submission["description"],
             "location": submission["location"],
@@ -67,6 +72,6 @@ def submit():
 
 
 if __name__ == "__main__":
-    # The Presentation Service runs on port 5000.
-    # Ensure this port is open in your ECS Security Group.
+    # The Presentation Service typically runs on port 5000.
+    # Note: Ensure ECS Security Groups allow inbound traffic on this port.
     app.run(host="0.0.0.0", port=5000, debug=True)
