@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # --- Configuration: Service Endpoints ---
 # Local or internal data management service
-DATA_SERVICE_BASE_URL = "http://101.37.187.169:5001"
+DATA_SERVICE_BASE_URL = "http://172.17.0.1:5001"
 # Serverless Function aliases for specific workflow stages
 SUBMISSION_EVENT_URL = "https://submissfunction-xhmbeyvezh.cn-hangzhou.fcapp.run"
 PROCESSING_URL = "https://processfunction-foletgmhuy.cn-hangzhou.fcapp.run"
