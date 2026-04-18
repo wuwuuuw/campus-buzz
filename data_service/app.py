@@ -8,18 +8,13 @@ records = {}
 
 @app.route("/health", methods=["GET"])
 def health():
-    """
-    Health check endpoint to verify if the container is running correctly.
-    """
+
     return jsonify({"status": "ok"}), 200
 
 
 @app.route("/records", methods=["POST"])
 def create_record():
-    """
-    Component: Data Service (Container)
-    Role: Create the initial submission record with a 'PENDING' status.
-    """
+
     data = request.get_json()
 
     if not data:
@@ -48,10 +43,7 @@ def create_record():
 
 @app.route("/records/<record_id>", methods=["GET"])
 def get_record(record_id):
-    """
-    Component: Data Service (Container)
-    Role: Retrieve a specific record so the user can view the outcome.
-    """
+
     record = records.get(record_id)
 
     if not record:
@@ -62,10 +54,7 @@ def get_record(record_id):
 
 @app.route("/records/<record_id>", methods=["PUT"])
 def update_record(record_id):
-    """
-    Component: Data Service (Container)
-    Role: Update the stored record with results computed by the Serverless functions.
-    """
+
     record = records.get(record_id)
 
     if not record:
