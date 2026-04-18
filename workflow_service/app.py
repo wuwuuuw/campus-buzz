@@ -43,15 +43,10 @@ def submit():
         create_response.raise_for_status()
         created_record = create_response.json()
 
-        # --- Step 2: Trigger Submission Event ---
-        # Pass the created record to an event function for pre-processing/logging
-        event_response = requests.post(
-            SUBMISSION_EVENT_URL,
-            json=created_record,
-            timeout=10,
-        )
-        event_response.raise_for_status()
-        event_payload = event_response.json()
+        event_payload = {
+            "record_id": created_record["id"],
+            "submission": created_record
+        }
 
         # --- Step 3: Core Logic Processing ---
         # Send the specific submission data to the processing engine
