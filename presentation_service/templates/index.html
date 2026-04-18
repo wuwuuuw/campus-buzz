@@ -3,48 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Buzz Submission</title>
+    <title>Campus Buzz - Submit Event</title>
+    <style>
+        /* Define theme variables for easy maintenance */
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Main container card */
+        .form-container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 480px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+        }
+
+        /* Spacing for form rows */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Unified style for inputs and textareas */
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #e1e4e8;
+            border-radius: 8px;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Interactive focus state */
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+        }
+
+        /* Submit button styling */
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        button:active {
+            transform: scale(0.98); /* Slight click effect */
+        }
+    </style>
 </head>
 <body>
-    <h1>Campus Buzz Event Submission</h1>
+    <div class="form-container">
+        <h1>🚀 Campus Buzz</h1>
+        <form action="/submit" method="post" novalidate>
+            <div class="form-group">
+                <label for="title">Event Title</label>
+                <input type="text" id="title" name="title" placeholder="e.g. Annual Tech Symposium">
+            </div>
 
-    <form action="/submit" method="post" novalidate>
-        <div>
-            <label for="title">Event Title:</label><br>
-            <input type="text" id="title" name="title">
-        </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" placeholder="What is this event about?"></textarea>
+            </div>
 
-        <br>
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" name="location" placeholder="e.g. Main Auditorium">
+            </div>
 
-        <div>
-            <label for="description">Description:</label><br>
-            <textarea id="description" name="description" rows="5" cols="50"></textarea>
-        </div>
+            <div class="form-group">
+                <label for="date">Date (YYYY-MM-DD)</label>
+                <input type="text" id="date" name="date" placeholder="2024-12-31">
+            </div>
 
-        <br>
+            <div class="form-group">
+                <label for="organiser">Organiser</label>
+                <input type="text" id="organiser" name="organiser" placeholder="Club or Department name">
+            </div>
 
-        <div>
-            <label for="location">Location:</label><br>
-            <input type="text" id="location" name="location">
-        </div>
-
-        <br>
-
-        <div>
-            <label for="date">Date (YYYY-MM-DD):</label><br>
-            <input type="text" id="date" name="date">
-        </div>
-
-        <br>
-
-        <div>
-            <label for="organiser">Organiser:</label><br>
-            <input type="text" id="organiser" name="organiser">
-        </div>
-
-        <br>
-
-        <button type="submit">Submit Event</button>
-    </form>
+            <button type="submit">Submit Event</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -3,26 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submission Result</title>
+    <title>Result - Campus Buzz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .result-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            max-width: 550px;
+            width: 100%;
+        }
+
+        /* Success header with bottom border */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Badge style for status and category */
+        .badge-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-status { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
+        .badge-priority { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+
+        /* Detail row layout using flex */
+        .detail-row {
+            display: flex;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #f0f0f0;
+        }
+
+        .label {
+            color: #888;
+            min-width: 100px;
+            font-weight: 600;
+        }
+
+        .value {
+            color: #333;
+            flex: 1;
+        }
+
+        /* Note box for system messages */
+        .note-box {
+            background: #fffbe6;
+            border-left: 4px solid #ffe58f;
+            padding: 12px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Submission Result</h1>
+    <div class="result-card">
+        <div class="header">
+            <h1 style="margin:0; color: #2ecc71;">Success!</h1>
+            <div class="badge-container">
+                <span class="badge badge-status">{{ result.status }}</span>
+                <span class="badge badge-priority">{{ result.priority }}</span>
+            </div>
+        </div>
 
-    <p><strong>Status:</strong> {{ result.status }}</p>
-    <p><strong>Category:</strong> {{ result.category }}</p>
-    <p><strong>Priority:</strong> {{ result.priority }}</p>
-    <p><strong>Note:</strong> {{ result.note }}</p>
+        <div class="detail-row">
+            <span class="label">Category:</span>
+            <span class="value">{{ result.category }}</span>
+        </div>
 
-    <hr>
+        {% if result.note %}
+        <div class="note-box">
+            <strong>Note:</strong> {{ result.note }}
+        </div>
+        {% endif %}
 
-    <h2>Submitted Event Details</h2>
-    <p><strong>Title:</strong> {{ result.title }}</p>
-    <p><strong>Description:</strong> {{ result.description }}</p>
-    <p><strong>Location:</strong> {{ result.location }}</p>
-    <p><strong>Date:</strong> {{ result.date }}</p>
-    <p><strong>Organiser:</strong> {{ result.organiser }}</p>
+        <h2 style="font-size: 1.2rem; margin-top: 1.5rem;">Event Summary</h2>
 
-    <br>
-    <a href="/">Submit Another Event</a>
+        <div class="detail-row"><span class="label">Title:</span><span class="value"><strong>{{ result.title }}</strong></span></div>
+        <div class="detail-row"><span class="label">Description:</span><span class="value">{{ result.description }}</span></div>
+        <div class="detail-row"><span class="label">Location:</span><span class="value">{{ result.location }}</span></div>
+        <div class="detail-row"><span class="label">Date:</span><span class="value">{{ result.date }}</span></div>
+        <div class="detail-row"><span class="label">Organiser:</span><span class="value">{{ result.organiser }}</span></div>
+
+        <a href="/" class="back-link">Submit Another Event</a>
+    </div>
 </body>
 </html>
